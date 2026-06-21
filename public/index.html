@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rapha Care Navigator</title>
+<style>
+  :root {
+    --bg: #f6f4ef;
+    --surface: #ffffff;
+    --ink: #2c2a26;
+    --ink-soft: #6b665e;
+    --line: #e6e1d8;
+    --sage: #5b7f6f;
+    --sage-deep: #436155;
+    --sage-tint: #eef3f0;
+    --clay: #c0664a;
+    --clay-tint: #f7ece8;
+    --focus: #2f6f5f;
+    --radius: 16px;
+    --shadow: 0 1px 2px rgba(44,42,38,.04), 0 8px 24px rgba(44,42,38,.06);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2 { font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
+  button { font: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+  .hidden { display: none !important; }
+
+  .app { max-width: 720px; margin: 0 auto; padding: 24px 20px 48px; min-height: 100%; display: flex; flex-direction: column; }
+
+  /* Header */
+  .brand { display: flex; align-items: center; gap: 12px; padding: 8px 0 20px; }
+  .mark {
+    width: 38px; height: 38px; border-radius: 11px;
+    background: linear-gradient(150deg, var(--sage), var(--sage-deep));
+    display: grid; place-items: center; color: #fff; font-weight: 700; flex: none;
+  }
+  .brand .name { font-weight: 600; font-size: 16px; }
+  .brand .tag { color: var(--ink-soft); font-size: 13px; }
+  .brand .spacer { flex: 1; }
+  .ghost-btn {
+    background: transparent; border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 7px 12px; border-radius: 10px; font-size: 14px;
+  }
+  .ghost-btn:hover { border-color: var(--sage); color: var(--sage-deep); }
+
+  /* Card */
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 28px;
+  }
+  .card h1 { margin: 0 0 6px; font-size: 26px; }
+  .lede { color: var(--ink-soft); margin: 0 0 22px; }
+
+  label { display: block; font-size: 14px; font-weight: 600; margin: 0 0 6px; color: var(--ink); }
+  input[type=text], input[type=email], input[type=password], input[type=date], textarea {
+    width: 100%; padding: 13px 14px; border: 1px solid var(--line); border-radius: 12px;
+    background: #fcfbf9; color: var(--ink); font: inherit;
+  }
+  input:focus, textarea:focus { border-color: var(--sage); background: #fff; }
+  textarea { resize: vertical; min-height: 96px; }
+  .field { margin-bottom: 16px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--sage-deep); color: #fff; border: none;
+    padding: 14px 20px; border-radius: 12px; font-weight: 600; width: 100%;
+  }
+  .btn:hover { background: #38534a; }
+  .btn:disabled { opacity: .55; cursor: default; }
+  .btn-secondary { background: transparent; color: var(--sage-deep); border: 1px solid var(--line); }
+  .btn-secondary:hover { background: var(--sage-tint); }
+
+  .row { display: flex; gap: 10px; }
+  .switch { text-align: center; margin-top: 18px; color: var(--ink-soft); font-size: 14px; }
+  .switch button { background: none; border: none; color: var(--sage-deep); font-weight: 600; padding: 0; }
+  .error { background: var(--clay-tint); color: #8f3e29; border: 1px solid #ecd2c9;
+           padding: 10px 13px; border-radius: 10px; font-size: 14px; margin-bottom: 16px; }
+  .demo-hint { font-size: 13px; color: var(--ink-soft); text-align: center; margin-top: 14px; }
+
+  /* Onboarding */
+  .progress { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .progress .bar { flex: 1; height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  .progress .fill { height: 100%; background: var(--sage); border-radius: 99px; transition: width .35s ease; }
+  .progress .count { font-size: 13px; color: var(--ink-soft); font-weight: 600; white-space: nowrap; }
+  .q-prompt { font-size: 22px; font-weight: 600; margin: 4px 0 6px; line-height: 1.3; }
+  .q-helper { color: var(--ink-soft); margin: 0 0 22px; font-size: 15px; }
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+  .opt {
+    text-align: left; background: #fcfbf9; border: 1.5px solid var(--line);
+    padding: 14px 16px; border-radius: 12px; color: var(--ink); display: flex; align-items: center; gap: 12px;
+  }
+  .opt:hover { border-color: var(--sage); }
+  .opt.sel { border-color: var(--sage-deep); background: var(--sage-tint); }
+  .opt .check { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--line); flex: none; display: grid; place-items: center; }
+  .opt.sel .check { background: var(--sage-deep); border-color: var(--sage-deep); color: #fff; }
+  .consent-box { display: flex; gap: 12px; align-items: flex-start; background: var(--sage-tint);
+                 padding: 16px; border-radius: 12px; margin-bottom: 22px; }
+
+  /* Chat */
+  .chat-wrap { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .chat-card { display: flex; flex-direction: column; flex: 1; padding: 0; overflow: hidden; }
+  .chat-head { padding: 16px 20px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; }
+  .chat-head .dot { width: 9px; height: 9px; border-radius: 99px; background: var(--sage); flex: none; }
+  .chat-head .who { font-weight: 600; font-size: 15px; }
+  .chat-head .sub { font-size: 13px; color: var(--ink-soft); }
+  .messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .msg { max-width: 82%; padding: 12px 15px; border-radius: 16px; font-size: 16px; white-space: pre-wrap; }
+  .msg.agent { align-self: flex-start; background: var(--sage-tint); border-bottom-left-radius: 5px; }
+  .msg.patient { align-self: flex-end; background: var(--sage-deep); color: #fff; border-bottom-right-radius: 5px; }
+  .msg.system { align-self: center; background: var(--clay-tint); color: #8f3e29; font-size: 13.5px;
+                border: 1px solid #ecd2c9; max-width: 92%; text-align: center; }
+  .route-chip { align-self: flex-start; font-size: 12.5px; color: var(--sage-deep);
+                background: #fff; border: 1px solid var(--line); padding: 4px 10px; border-radius: 99px; }
+  .composer { display: flex; gap: 10px; padding: 14px; border-top: 1px solid var(--line); background: #fcfbf9; }
+  .composer textarea { min-height: 0; height: 48px; max-height: 140px; padding: 12px 14px; }
+  .composer .send { width: 48px; height: 48px; flex: none; border-radius: 12px; padding: 0; }
+  .typing { font-size: 13px; color: var(--ink-soft); padding: 0 20px 10px; font-style: italic; }
+  .esc-btn { margin: 0 14px 14px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="brand">
+    <div class="mark">R</div>
+    <div>
+      <div class="name">Rapha Care Navigator</div>
+      <div class="tag">Here to help you navigate, one step at a time</div>
+    </div>
+    <div class="spacer"></div>
+    <button id="logoutBtn" class="ghost-btn hidden" onclick="logout()">Sign out</button>
+  </div>
+
+  <!-- AUTH -->
+  <div id="authView">
+    <div class="card">
+      <h1 id="authTitle">Welcome</h1>
+      <p class="lede" id="authLede">Sign in to continue your care journey.</p>
+      <div id="authError" class="error hidden"></div>
+
+      <div id="nameField" class="field hidden">
+        <label for="name">Your name</label>
+        <input type="text" id="name" autocomplete="name" />
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" autocomplete="email" />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" />
+      </div>
+      <button class="btn" id="authSubmit" onclick="submitAuth()">Sign in</button>
+      <div class="switch" id="authSwitch">
+        New here? <button onclick="toggleAuthMode()">Create an account</button>
+      </div>
+      <div class="demo-hint">Demo login: demo@rapha.health &nbsp;/&nbsp; demo1234</div>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div id="onboardView" class="hidden">
+    <div class="card">
+      <div class="progress">
+        <div class="bar"><div class="fill" id="obFill" style="width:0%"></div></div>
+        <div class="count" id="obCount">Step 1 of 8</div>
+      </div>
+      <div class="q-prompt" id="obPrompt"></div>
+      <div class="q-helper" id="obHelper"></div>
+      <div id="obInput"></div>
+      <div class="row">
+        <button class="btn btn-secondary" id="obBack" onclick="obBack()" style="flex:0 0 auto; width:auto; padding-left:22px; padding-right:22px;">Back</button>
+        <button class="btn" id="obNext" onclick="obNext()">Save &amp; continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+  <div id="chatView" class="hidden chat-wrap">
+    <div class="card chat-card">
+      <div class="chat-head">
+        <span class="dot"></span>
+        <div>
+          <div class="who">Care Navigator</div>
+          <div class="sub">Condition-intelligent support for fibromyalgia</div>
+        </div>
+      </div>
+      <div class="messages" id="messages"></div>
+      <div class="typing hidden" id="typing">Navigator is thinking…</div>
+      <button class="btn btn-secondary esc-btn" onclick="requestHuman()">Talk to a human specialist</button>
+      <div class="composer">
+        <textarea id="msgInput" placeholder="Type your message…" rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+        <button class="btn send" onclick="sendMessage()" aria-label="Send">→</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '';
+let token = localStorage.getItem('hnaas_token') || null;
+let patient = JSON.parse(localStorage.getItem('hnaas_patient') || 'null');
+let authMode = 'login';
+let sessionId = null;
+
+// ---- helpers ----
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const res = await fetch(API + path, { ...opts, headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Something went wrong');
+  return data;
+}
+function show(view) {
+  for (const v of ['authView','onboardView','chatView']) document.getElementById(v).classList.add('hidden');
+  document.getElementById(view).classList.remove('hidden');
+  document.getElementById('logoutBtn').classList.toggle('hidden', view === 'authView');
+}
+
+// ---- auth ----
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  document.getElementById('nameField').classList.toggle('hidden', authMode === 'login');
+  document.getElementById('authTitle').textContent = authMode === 'login' ? 'Welcome' : 'Create your account';
+  document.getElementById('authLede').textContent = authMode === 'login'
+    ? 'Sign in to continue your care journey.'
+    : "Let's get you set up. It only takes a moment.";
+  document.getElementById('authSubmit').textContent = authMode === 'login' ? 'Sign in' : 'Create account';
+  document.getElementById('authSwitch').innerHTML = authMode === 'login'
+    ? 'New here? <button onclick="toggleAuthMode()">Create an account</button>'
+    : 'Already have an account? <button onclick="toggleAuthMode()">Sign in</button>';
+}
+async function submitAuth() {
+  const err = document.getElementById('authError');
+  err.classList.add('hidden');
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const name = document.getElementById('name').value.trim();
+  try {
+    const body = authMode === 'login' ? { email, password } : { name, email, password };
+    const data = await api('/api/auth/' + authMode, { method: 'POST', body: JSON.stringify(body) });
+    token = data.token; patient = data.patient;
+    localStorage.setItem('hnaas_token', token);
+    localStorage.setItem('hnaas_patient', JSON.stringify(patient));
+    routeAfterAuth();
+  } catch (e) { err.textContent = e.message; err.classList.remove('hidden'); }
+}
+function logout() {
+  token = null; patient = null; sessionId = null;
+  localStorage.removeItem('hnaas_token'); localStorage.removeItem('hnaas_patient');
+  show('authView');
+}
+function routeAfterAuth() {
+  if (!patient.onboardingDone && patient.role === 'patient') startOnboarding();
+  else startChat();
+}
+
+// ---- onboarding ----
+let obFlow = [], obIndex = 0, obSelections = {};
+async function startOnboarding() {
+  const data = await api('/api/onboarding');
+  obFlow = data.questions;
+  obIndex = Math.max(0, data.currentStep); // resume
+  if (obIndex >= obFlow.length) return startChat();
+  show('onboardView');
+  renderOnboard();
+}
+function renderOnboard() {
+  const q = obFlow[obIndex];
+  document.getElementById('obFill').style.width = ((obIndex) / obFlow.length * 100) + '%';
+  document.getElementById('obCount').textContent = `Step ${q.step} of ${obFlow.length}`;
+  document.getElementById('obPrompt').textContent = q.prompt;
+  document.getElementById('obHelper').textContent = q.helper || '';
+  document.getElementById('obBack').style.visibility = obIndex === 0 ? 'hidden' : 'visible';
+  const wrap = document.getElementById('obInput');
+  wrap.innerHTML = '';
+  obSelections[q.id] = obSelections[q.id] || (q.type === 'multiselect' ? [] : '');
+
+  if (q.type === 'multiselect') {
+    const box = document.createElement('div'); box.className = 'options';
+    q.options.forEach(opt => {
+      const b = document.createElement('button'); b.className = 'opt'; b.type = 'button';
+      b.innerHTML = `<span class="check">✓</span><span>${opt}</span>`;
+      const sel = obSelections[q.id];
+      if (sel.includes(opt)) b.classList.add('sel');
+      b.onclick = () => {
+        const arr = obSelections[q.id];
+        const i = arr.indexOf(opt);
+        if (i >= 0) arr.splice(i,1); else arr.push(opt);
+        b.classList.toggle('sel');
+      };
+      box.appendChild(b);
+    });
+    wrap.appendChild(box);
+  } else if (q.type === 'consent') {
+    const box = document.createElement('div'); box.className = 'consent-box';
+    box.innerHTML = `<input type="checkbox" id="consentChk" style="width:22px;height:22px;margin-top:2px" />
+      <label for="consentChk" style="font-weight:500;margin:0">Yes, I agree.</label>`;
+    wrap.appendChild(box);
+    box.querySelector('#consentChk').checked = obSelections[q.id] === true;
+    box.querySelector('#consentChk').onchange = (e) => obSelections[q.id] = e.target.checked;
+  } else if (q.type === 'textarea') {
+    const t = document.createElement('textarea'); t.value = obSelections[q.id] || '';
+    t.oninput = e => obSelections[q.id] = e.target.value; wrap.appendChild(t);
+  } else if (q.type === 'date') {
+    const t = document.createElement('input'); t.type = 'date'; t.value = obSelections[q.id] || '';
+    t.oninput = e => obSelections[q.id] = e.target.value; wrap.appendChild(t);
+  } else {
+    const t = document.createElement('input'); t.type = 'text'; t.value = obSelections[q.id] || '';
+    t.oninput = e => obSelections[q.id] = e.target.value; wrap.appendChild(t);
+  }
+}
+function obBack() { if (obIndex > 0) { obIndex--; renderOnboard(); } }
+async function obNext() {
+  const q = obFlow[obIndex];
+  const value = obSelections[q.id];
+  if (q.type === 'consent' && q.id === 'consent-tos' && value !== true) {
+    alert('Please agree to the Terms to continue.'); return;
+  }
+  document.getElementById('obNext').disabled = true;
+  try {
+    await api('/api/onboarding/answer', { method: 'POST', body: JSON.stringify({ questionId: q.id, value }) });
+    obIndex++;
+    if (obIndex >= obFlow.length) {
+      patient.onboardingDone = true;
+      localStorage.setItem('hnaas_patient', JSON.stringify(patient));
+      startChat();
+    } else renderOnboard();
+  } catch (e) { alert(e.message); }
+  finally { document.getElementById('obNext').disabled = false; }
+}
+
+// ---- chat ----
+async function startChat() {
+  show('chatView');
+  document.getElementById('messages').innerHTML = '';
+  try {
+    const data = await api('/api/sessions', { method: 'POST' });
+    sessionId = data.id;
+    (data.messages || []).forEach(m => addMessage(m.role, m.content));
+  } catch (e) { addMessage('system', e.message); }
+}
+function addMessage(role, content) {
+  const m = document.createElement('div');
+  m.className = 'msg ' + (role === 'patient' ? 'patient' : role === 'system' ? 'system' : 'agent');
+  m.textContent = content;
+  const box = document.getElementById('messages');
+  box.appendChild(m); box.scrollTop = box.scrollHeight;
+}
+function addRouteChip(text) {
+  const c = document.createElement('div'); c.className = 'route-chip'; c.textContent = '↪ ' + text;
+  const box = document.getElementById('messages'); box.appendChild(c); box.scrollTop = box.scrollHeight;
+}
+async function sendMessage() {
+  const input = document.getElementById('msgInput');
+  const content = input.value.trim();
+  if (!content || !sessionId) return;
+  input.value = '';
+  addMessage('patient', content);
+  document.getElementById('typing').classList.remove('hidden');
+  try {
+    const data = await api(`/api/sessions/${sessionId}/messages`, { method: 'POST', body: JSON.stringify({ content }) });
+    document.getElementById('typing').classList.add('hidden');
+    addMessage('agent', data.agentMsg.content);
+    if (data.route && data.route.routedTo) addRouteChip('Routed to ' + data.route.routedTo);
+    if (data.escalate) addMessage('system', 'A member of our care team has been notified and will follow up with you.');
+  } catch (e) {
+    document.getElementById('typing').classList.add('hidden');
+    addMessage('system', e.message);
+  }
+}
+async function requestHuman() {
+  if (!sessionId) return;
+  try {
+    await api(`/api/sessions/${sessionId}/escalate`, { method: 'POST', body: JSON.stringify({ reason: 'Patient tapped "Talk to a human".' }) });
+    addMessage('system', "You're being connected with an HNaaS specialist. Your full history has been shared so you won't need to repeat anything.");
+  } catch (e) { addMessage('system', e.message); }
+}
+
+// ---- boot ----
+(function init() {
+  if (token && patient) { routeAfterAuth(); }
+  else { show('authView'); }
+})();
+</script>
+</body>
+</html>
