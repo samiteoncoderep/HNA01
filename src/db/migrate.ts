@@ -16,6 +16,7 @@ async function migrate() {
   await pool.query(sql);
   // eslint-disable-next-line no-console
   console.log('[migrate] done.');
+  await pool.end();
 }
 
 migrate().catch((err) => {
